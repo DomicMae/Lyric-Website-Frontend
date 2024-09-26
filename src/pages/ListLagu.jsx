@@ -5,13 +5,13 @@ import NavbarLyrics from "../components/NavbarLyrics";
 export default function ListLagu(props) {
   return (
     <div className=" bg-custom-blue">
-      <NavbarLyrics user={props.auth.user} />
+      <NavbarLyrics />
       <main>
         <section id="body-home" className="px-10">
           <BodyListLagu />
         </section>
       </main>
-      <Footer user={props.auth.user} />
+      <Footer/>
     </div>
   );
 }

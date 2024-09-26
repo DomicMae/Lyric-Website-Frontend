@@ -6,7 +6,7 @@ import Navbar from "../components/Navbar";
 export default function HomePage(props) {
   return (
     <div className=" bg-custom-blue">
-      <Navbar user={props.auth.user} />
+      <Navbar/>
       <main>
         <section id="body-home" className="px-10">
           <BodyHomePage />
@@ -15,7 +15,7 @@ export default function HomePage(props) {
           <BodyDaftarLagu />
         </section>
       </main>
-      <Footer user={props.auth.user} />
+      <Footer />
     </div>
   );
 }
