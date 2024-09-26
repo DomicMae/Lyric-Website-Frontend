@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import "../input.css";
 
 const BodyRequestLagu = () => {
@@ -12,10 +13,14 @@ const BodyRequestLagu = () => {
   const [message, setMessage] = useState(null); // To show success/error message
   const [artistCheckMessage, setArtistCheckMessage] = useState(""); // Message for artist checking
   const [artistExist, setArtisExist] = useState(false);
+  const [CheckArtist,setCheckArtist] = useState(false);
+
+  const navigate = useNavigate();
 
   // Function to check artist by name
   const checkArtist = async () => {
     setLoading(true); // Set loading state
+    setCheckArtist(true);
     try {
       // Fetch artist data from API
       const response = await fetch(
@@ -44,7 +49,7 @@ const BodyRequestLagu = () => {
         } else {
           setArtistCheckMessage("Data tidak ditemukan.");
           setArtistId(""); // Clear artist ID if not found
-          setArtis(false);
+          setArtisExist(false);
         }
       } else {
         setLoading(false);
@@ -58,179 +63,85 @@ const BodyRequestLagu = () => {
     }
   };
 
-  // Handle form submission for adding the song
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault(); // Prevent page refresh
-
-  //   // Create an object with the form data
-  //   const requestData = {
-  //     songsName: String(judulLagu), // Ensure it's a string
-  //     artistId: String(artistId), // Ensure it's a string
-  //     lirik: String(lirikLagu), // Ensure it's a string
-  //     songsLink: String(songsLink), // Ensure it's a string
-  //   };
-
-  //   console.log("Request Data:", requestData);
-
-  //   setLoading(true); // Set loading state
-  //   // variabel artiw true
-  //   if ((artistExist = true)) {
-  //     try {
-  //       // Send a POST request to the API
-  //       const response = await fetch(
-  //         "https://website-lirik-c51g.vercel.app/api/songs",
-  //         {
-  //           method: "POST",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //           },
-  //           body: JSON.stringify(requestData), // Send form data as JSON
-  //         }
-  //       );
-
-  //       const data = await response.json();
-  //       setLoading(false); // Set loading to false after the request
-
-  //       if (response.ok && data.statusCode === 200) {
-  //         setMessage("Lagu berhasil ditambahkan!");
-  //         // Optionally clear the form after successful submission
-  //         setJudulLagu("");
-  //         setArtis("");
-  //         setLirikLagu("");
-  //         setsongsLink("");
-  //         setArtistId(""); // Clear artistId field
-  //       } else {
-  //         setMessage("Gagal menambahkan lagu. Silakan coba lagi.");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error submitting song:", error);
-  //       setMessage("Terjadi kesalahan saat menambahkan lagu.");
-  //       setLoading(false);
-  //     }
-  //   } else {
-  //     alert("sss");
-  //   }
-  // };
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent page refresh
+    e.preventDefault();
 
-    // Create an object with the form data for the song
-    const requestData = {
-      songsName: String(judulLagu), // Ensure it's a string
-      artistId: String(artistId), // Ensure it's a string
-      lirik: String(lirikLagu), // Ensure it's a string
-      songsLink: String(songsLink), // Ensure it's a string
-    };
+    if(CheckArtist === false){
+        alert("Silahkan cek artis terlebih dahulu");
+        return;
+    }
 
-    console.log("Request Data:", requestData);
+    let artistIdToUse;
 
-    setLoading(true); // Set loading state
-
-    // If artist exists, post the song directly
-    if (artistExist) {
-      try {
-        // Send a POST request to the API to add the song
-        const response = await fetch(
-          "https://website-lirik-c51g.vercel.app/api/songs",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestData), // Send form data as JSON
-          }
-        );
-
-        const data = await response.json();
-        setLoading(false); // Set loading to false after the request
-
-        if (response.ok && data.statusCode === 200) {
-          setMessage("Lagu berhasil ditambahkan!");
-          // Optionally clear the form after successful submission
-          setJudulLagu("");
-          setArtis("");
-          setLirikLagu("");
-          setsongsLink("");
-          setArtistId(""); // Clear artistId field
-        } else {
-          setMessage("Gagal menambahkan lagu. Silakan coba lagi.");
-        }
-      } catch (error) {
-        console.error("Error submitting song:", error);
-        setMessage("Terjadi kesalahan saat menambahkan lagu.");
-        setLoading(false);
-      }
-    } else {
-      // Artist does not exist, first post the artist
-      try {
-        // Create an object for posting the artist
+    // Jika artis belum ada
+    if(artistExist === false){
+        // Data 
         const artistData = {
-          artistName: String(artis), // Assuming `artis` is the artist name
+            artistName: String(artis), // Mengonversi nama artis menjadi string
         };
 
-        const artistResponse = await fetch(
-          "https://website-lirik-c51g.vercel.app/api/artists",
-          {
+        try {
+            // Melakukan request POST ke API untuk menambahkan artis
+            const artistResponse = await fetch("https://website-lirik-c51g.vercel.app/api/artists", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(artistData),
+            });
+
+            // Mengonversi respons menjadi JSON
+            const artistDataResponse = await artistResponse.json();
+            console.log('Artist Response Data:', artistDataResponse);
+
+            // Mendapatkan artistId dari response
+            artistIdToUse = artistDataResponse.data.artistId;
+
+        } catch (error) {
+            console.error("Error submitting artist data:", error);
+            return; // Menghentikan proses jika terjadi error
+        }
+    } else {
+        // Jika artis sudah ada, gunakan artistId yang sudah ada
+        artistIdToUse = artistId;
+    }
+
+    // Data untuk menambahkan lagu
+    const requestData = {
+        songsName: String(judulLagu), // Pastikan judul lagu adalah string
+        artistId: String(artistIdToUse), // Gunakan artistId yang diperoleh
+        lirik: String(lirikLagu),     // Pastikan lirik lagu adalah string
+        songsLink: String(songsLink), // Pastikan link lagu adalah string
+    };
+
+    try {
+        // Mengirim request POST ke API untuk menambahkan lagu
+        const response = await fetch("https://website-lirik-c51g.vercel.app/api/songs", {
             method: "POST",
             headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(artistData),
-          }
-        );
-
-        const artistInfo = await artistResponse.json();
-
-        if (artistResponse.ok && artistInfo.statusCode === 200) {
-          // Artist created successfully, use the returned artistId
-          const newArtistId = artistInfo.artistId;
-          console.log("New Artist ID:", newArtistId);
-
-          // Now, update the requestData with the new artistId
-          requestData.artistId = newArtistId;
-
-          // Proceed to post the song after adding the artist
-          const songResponse = await fetch(
-            "https://website-lirik-c51g.vercel.app/api/songs",
-            {
-              method: "POST",
-              headers: {
                 "Content-Type": "application/json",
-              },
-              body: JSON.stringify(requestData), // Send form data as JSON
-            }
-          );
+            },
+            body: JSON.stringify(requestData), // Kirim data form sebagai JSON
+        });
 
-          const songData = await songResponse.json();
-          setLoading(false); // Set loading to false after the request
-
-          if (songResponse.ok && songData.statusCode === 200) {
-            setMessage("Lagu berhasil ditambahkan setelah menambahkan artis!");
-            // Optionally clear the form after successful submission
-            setJudulLagu("");
-            setArtis("");
-            setLirikLagu("");
-            setsongsLink("");
-            setArtistId(""); // Clear artistId field
-          } else {
-            setMessage(
-              "Gagal menambahkan lagu setelah artis. Silakan coba lagi."
-            );
-          }
-        } else {
-          setMessage("Gagal menambahkan artis. Silakan coba lagi.");
-          setLoading(false);
+        // Cek apakah respons berhasil
+        if (!response.ok) {
+            throw new Error(`Error: ${response.statusText}`);
         }
-      } catch (error) {
-        console.error("Error submitting artist or song:", error);
-        setMessage("Terjadi kesalahan saat menambahkan artis atau lagu.");
-        setLoading(false);
-      }
-    }
-  };
 
-  // false
-  // post artist -> artis id udh ada -> post lagu
+        // Mengonversi respons menjadi JSON
+        const data = await response.json();
+        console.log("Song successfully submitted:", data);
+        navigate('/');
+
+    } catch (error) {
+        console.error("Error submitting song data:", error);
+        return null;
+    }
+}
+
+  
+
 
   return (
     <div className="text-black flex justify-center pt-5 pb-5">
@@ -295,21 +206,6 @@ const BodyRequestLagu = () => {
               {artistCheckMessage && (
                 <div className="text-red-500 mt-2">{artistCheckMessage}</div>
               )}
-            </div>
-
-            {/* Artist ID (Auto-filled after checking artist name) */}
-            <div>
-              <label className="block text-lg font-medium text-custom-black mb-2">
-                ID Artis
-              </label>
-              <input
-                type="text"
-                value={artistId}
-                onChange={(e) => setArtistId(e.target.value)}
-                placeholder="ID akan terisi otomatis"
-                className="w-full h-14 px-6 py-2 text-lg text-custom-black rounded-xl shadow-md focus:outline-none bg-gray-100"
-                disabled
-              />
             </div>
 
             {/* Lyrics Input */}
