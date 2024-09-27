@@ -79,7 +79,9 @@ const BodyDaftarLagu = () => {
               <div
                 key={letter}
                 className={`text-center font-semibold text-custom-black bg-white border border-gray-300 rounded-lg p-3 shadow-md min-w-[50px] cursor-pointer ${
-                  selectedLetter === letter ? "bg-blue-200" : ""
+                  selectedLetter === letter
+                    ? "border-4 border-black " // Background color for any selected letter
+                    : "bg-blue-200"
                 }`}
                 onClick={() => setSelectedLetter(letter)} // Set the clicked letter
               >
