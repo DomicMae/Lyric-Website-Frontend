@@ -5,9 +5,9 @@ import Navbar from "../components/Navbar";
 
 export default function HomePage(props) {
   return (
-    <div className=" bg-custom-blue">
-      <Navbar/>
-      <main>
+    <div className=" min-h-screen flex flex-col bg-custom-blue">
+      <Navbar />
+      <main className="flex-grow">
         <section id="body-home" className="px-10">
           <BodyHomePage />
         </section>
@@ -15,7 +15,7 @@ export default function HomePage(props) {
           <BodyDaftarLagu />
         </section>
       </main>
-      <Footer />
+      <Footer className="h-[10vh]" />
     </div>
   );
 }
