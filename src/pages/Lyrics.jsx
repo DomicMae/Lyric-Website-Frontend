@@ -4,14 +4,14 @@ import Footer from "../components/Footer";
 
 export default function Lyrics(props) {
   return (
-    <div className=" bg-custom-blue">
-      <NavbarLyrics className="px-10" user={props.auth.user} />
-      <main>
+    <div className="min-h-screen flex flex-col bg-custom-blue">
+      <NavbarLyrics className="px-10" />
+      <main className="flex-grow">
         <section id="body-lyrics" className="px-10">
           <BodyLyricsLagu />
         </section>
       </main>
-      <Footer user={props.auth.user} />
+      <Footer className="h-[10vh]" />
     </div>
   );
 }

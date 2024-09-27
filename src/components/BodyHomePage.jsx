@@ -29,7 +29,7 @@ const BodyHomePage = () => {
   };
 
   return (
-    <div className="text-black pt-5 pb-10">
+    <div className="text-black pt-5 pb-10 ">
       <div className="grid grid-cols-2 gap-4 p-10">
         <div className="col-span-1 flex-col">
           {/* Title */}

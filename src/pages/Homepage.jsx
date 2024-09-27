@@ -5,7 +5,7 @@ import Navbar from "../components/Navbar";
 
 export default function HomePage(props) {
   return (
-    <div className=" min-h-screen flex flex-col bg-custom-blue">
+    <div className="min-h-screen flex flex-col bg-custom-blue">
       <Navbar />
       <main className="flex-grow">
         <section id="body-home" className="px-10">

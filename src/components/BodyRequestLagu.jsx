@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import "../input.css";
 
 const BodyRequestLagu = () => {
@@ -13,7 +13,7 @@ const BodyRequestLagu = () => {
   const [message, setMessage] = useState(null); // To show success/error message
   const [artistCheckMessage, setArtistCheckMessage] = useState(""); // Message for artist checking
   const [artistExist, setArtisExist] = useState(false);
-  const [CheckArtist,setCheckArtist] = useState(false);
+  const [CheckArtist, setCheckArtist] = useState(false);
 
   const navigate = useNavigate();
 
@@ -66,82 +66,83 @@ const BodyRequestLagu = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if(CheckArtist === false){
-        alert("Silahkan cek artis terlebih dahulu");
-        return;
+    if (CheckArtist === false) {
+      alert("Silahkan cek artis terlebih dahulu");
+      return;
     }
 
     let artistIdToUse;
 
     // Jika artis belum ada
-    if(artistExist === false){
-        // Data 
-        const artistData = {
-            artistName: String(artis), // Mengonversi nama artis menjadi string
-        };
+    if (artistExist === false) {
+      // Data
+      const artistData = {
+        artistName: String(artis), // Mengonversi nama artis menjadi string
+      };
 
-        try {
-            // Melakukan request POST ke API untuk menambahkan artis
-            const artistResponse = await fetch("https://website-lirik-c51g.vercel.app/api/artists", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(artistData),
-            });
+      try {
+        // Melakukan request POST ke API untuk menambahkan artis
+        const artistResponse = await fetch(
+          "https://website-lirik-c51g.vercel.app/api/artists",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(artistData),
+          }
+        );
 
-            // Mengonversi respons menjadi JSON
-            const artistDataResponse = await artistResponse.json();
-            console.log('Artist Response Data:', artistDataResponse);
+        // Mengonversi respons menjadi JSON
+        const artistDataResponse = await artistResponse.json();
+        console.log("Artist Response Data:", artistDataResponse);
 
-            // Mendapatkan artistId dari response
-            artistIdToUse = artistDataResponse.data.artistId;
-
-        } catch (error) {
-            console.error("Error submitting artist data:", error);
-            return; // Menghentikan proses jika terjadi error
-        }
+        // Mendapatkan artistId dari response
+        artistIdToUse = artistDataResponse.data.artistId;
+      } catch (error) {
+        console.error("Error submitting artist data:", error);
+        return; // Menghentikan proses jika terjadi error
+      }
     } else {
-        // Jika artis sudah ada, gunakan artistId yang sudah ada
-        artistIdToUse = artistId;
+      // Jika artis sudah ada, gunakan artistId yang sudah ada
+      artistIdToUse = artistId;
     }
 
     // Data untuk menambahkan lagu
     const requestData = {
-        songsName: String(judulLagu), // Pastikan judul lagu adalah string
-        artistId: String(artistIdToUse), // Gunakan artistId yang diperoleh
-        lirik: String(lirikLagu),     // Pastikan lirik lagu adalah string
-        songsLink: String(songsLink), // Pastikan link lagu adalah string
+      songsName: String(judulLagu), // Pastikan judul lagu adalah string
+      artistId: String(artistIdToUse), // Gunakan artistId yang diperoleh
+      lirik: String(lirikLagu), // Pastikan lirik lagu adalah string
+      songsLink: String(songsLink), // Pastikan link lagu adalah string
     };
 
     try {
-        // Mengirim request POST ke API untuk menambahkan lagu
-        const response = await fetch("https://website-lirik-c51g.vercel.app/api/songs", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestData), // Kirim data form sebagai JSON
-        });
-
-        // Cek apakah respons berhasil
-        if (!response.ok) {
-            throw new Error(`Error: ${response.statusText}`);
+      // Mengirim request POST ke API untuk menambahkan lagu
+      const response = await fetch(
+        "https://website-lirik-c51g.vercel.app/api/songs",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData), // Kirim data form sebagai JSON
         }
+      );
 
-        // Mengonversi respons menjadi JSON
-        const data = await response.json();
-        console.log("Song successfully submitted:", data);
-        navigate('/');
+      // Cek apakah respons berhasil
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
 
+      // Mengonversi respons menjadi JSON
+      const data = await response.json();
+      console.log("Song successfully submitted:", data);
+      navigate("/");
     } catch (error) {
-        console.error("Error submitting song data:", error);
-        return null;
+      console.error("Error submitting song data:", error);
+      return null;
     }
-}
-
-  
-
+  };
 
   return (
     <div className="text-black flex justify-center pt-5 pb-5">

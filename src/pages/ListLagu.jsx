@@ -4,14 +4,14 @@ import NavbarLyrics from "../components/NavbarLyrics";
 
 export default function ListLagu(props) {
   return (
-    <div className=" bg-custom-blue">
+    <div className="min-h-screen flex flex-col bg-custom-blue">
       <NavbarLyrics />
-      <main>
+      <main className="flex-grow">
         <section id="body-home" className="px-10">
           <BodyListLagu />
         </section>
       </main>
-      <Footer/>
+      <Footer className="h-[10vh]" />
     </div>
   );
 }

@@ -29,7 +29,7 @@ const NavbarLyrics = () => {
   };
 
   return (
-    <nav className="navbar grid grid-cols-2  bg-custom-blue-seas dark:bg-custom-blue-seas p-5 px-14">
+    <nav className="navbar grid grid-cols-2 bg-custom-blue-seas dark:bg-custom-blue-seas p-5 px-14 ">
       <div className="col-span-1 items-center space-x-8">
         {/* Logo or Title */}
         <a href="/" className="flex items-center font-bold ">
