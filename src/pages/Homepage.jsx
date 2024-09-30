@@ -8,7 +8,7 @@ export default function HomePage(props) {
     <div className="min-h-screen flex flex-col bg-custom-blue">
       <Navbar />
       <main className="flex-grow">
-        <section id="body-home" className="px-10">
+        <section id="body-home" className="px-10 ">
           <BodyHomePage />
         </section>
         <section id="body-daftarlagu" className="py-10 px-10">

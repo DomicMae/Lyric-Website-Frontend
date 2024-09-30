@@ -4,8 +4,9 @@ import { Link } from "react-router-dom";
 
 const BodyDaftarLagu = () => {
   const [songs, setSongs] = useState([]);
-  const [selectedLetter, setSelectedLetter] = useState("A");
+  const [selectedLetter, setSelectedLetter] = useState(""); // No default letter selected
   const [filteredSongs, setFilteredSongs] = useState([]); // State for filtered songs
+  const [isLetterSelected, setIsLetterSelected] = useState(false); // Track if a letter is selected
 
   useEffect(() => {
     // Fetch song data from the API
@@ -37,6 +38,12 @@ const BodyDaftarLagu = () => {
       setFilteredSongs(songs); // Show all songs if no letter is selected
     }
   }, [selectedLetter, songs]);
+
+  // Handle letter selection and set the flag to true
+  const handleLetterClick = (letter) => {
+    setSelectedLetter(letter);
+    setIsLetterSelected(true); // Set the flag to true when a letter is clicked
+  };
 
   return (
     <div className="text-black">
@@ -78,12 +85,12 @@ const BodyDaftarLagu = () => {
             ].map((letter) => (
               <div
                 key={letter}
-                className={`text-center font-semibold text-custom-black bg-white border border-gray-300 rounded-lg p-3 shadow-md min-w-[50px] cursor-pointer ${
+                className={`text-center font-semibold text-custom-black bg-white rounded-lg p-3 shadow-md min-w-[50px] cursor-pointer ${
                   selectedLetter === letter
-                    ? "border-4 border-black " // Background color for any selected letter
-                    : "bg-blue-200"
+                    ? "border-black border-4"
+                    : "border-gray-300"
                 }`}
-                onClick={() => setSelectedLetter(letter)} // Set the clicked letter
+                onClick={() => handleLetterClick(letter)} // Set the clicked letter
               >
                 {letter}
               </div>
@@ -94,27 +101,29 @@ const BodyDaftarLagu = () => {
 
       {/* Display Filtered Songs */}
       <div className="grid grid-cols-6 gap-4 p-10">
-        {filteredSongs.length > 0 ? (
-          filteredSongs.map((song) => (
-            <div key={song._id} className="col-span-1 flex-col">
-              <div className="mt-6">
-                {/* Link to song lyrics page */}
-                <Link to={`/lyrics/${song.songId}`}>
-                  <input
-                    type="text"
-                    value={song.songsName}
-                    readOnly
-                    className="w-full h-14 px-6 py-2 text-lg text-custom-black rounded-xl shadow-md focus:outline-none bg-custom-blue-white cursor-pointer"
-                  />
-                </Link>
+        {
+          filteredSongs.length > 0 ? (
+            filteredSongs.map((song) => (
+              <div key={song._id} className="col-span-1 flex-col">
+                <div className="mt-6">
+                  {/* Link to song lyrics page */}
+                  <Link to={`/lyrics/${song.songId}`}>
+                    <input
+                      type="text"
+                      value={song.songsName}
+                      readOnly
+                      className="w-full h-14 px-6 py-2 text-lg text-custom-black rounded-xl shadow-md focus:outline-none bg-custom-blue-white cursor-pointer"
+                    />
+                  </Link>
+                </div>
               </div>
+            ))
+          ) : isLetterSelected ? ( // Show message only if a letter is selected
+            <div className="col-span-6 text-center text-lg font-medium text-red-500">
+              Tidak ada lagu yang diawali dengan huruf "{selectedLetter}"
             </div>
-          ))
-        ) : (
-          <div className="col-span-6 text-center text-lg font-medium text-red-500">
-            Tidak ada lagu yang diawali dengan huruf "{selectedLetter}"
-          </div>
-        )}
+          ) : null /* Do not show any message initially */
+        }
       </div>
     </div>
   );

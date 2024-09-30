@@ -30,20 +30,24 @@ const BodyHomePage = () => {
 
   return (
     <div className="text-black pt-5 pb-10 ">
-      <div className="grid grid-cols-2 gap-4 p-10">
-        <div className="col-span-1 flex-col">
+      <div className="grid grid-cols-2 gap-4 p-10 items-center">
+        {" "}
+        {/* Add items-center to align items vertically */}
+        <div className="col-span-1 flex flex-col">
+          {" "}
+          {/* Center content horizontally */}
           {/* Title */}
-          <h1 className="text-4xl font-bold sm:text-5xl text-custom-black pb-8">
+          <h1 className="text-4xl font-bold sm:text-5xl text-custom-black pb-4">
             Music Lyrics
           </h1>
-
           {/* Description */}
           <p className="text-custom-blue-black text-xl font-normal">
             Music Lyrics merupakan website yang menyediakan Lirik Lagu.
           </p>
-
           {/* Input box and search button */}
-          <div className="relative mt-4 shadow-xl">
+          <div className="relative mt-4 shadow-xl w-full">
+            {" "}
+            {/* Set width to full for proper layout */}
             <input
               type="text"
               value={searchTerm} // Bind input value to state
@@ -61,6 +65,14 @@ const BodyHomePage = () => {
               </button>
             </div>
           </div>
+        </div>
+        {/* Right side (image) */}
+        <div className="col-span-1 flex justify-center">
+          <img
+            src="/Playing_Guitar.png"
+            alt="Playing Guitar"
+            className="max-w-full h-auto"
+          />
         </div>
       </div>
     </div>

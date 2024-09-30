@@ -73,15 +73,20 @@ const BodyLyricsLagu = () => {
               <p className="text-lg font-semibold text-custom-blue-black">
                 {artistName || "Unknown Artist"} {/* Display artistName */}
               </p>
+              <a
+                href={songData.songsLink}
+                target="_blank" // Open in a new tab
+                rel="noopener noreferrer" // For security reasons
+                className="text-custom-blue-black" // Styling the link
+              >
+                {songData.songsLink}
+              </a>
             </div>
           </div>
         </div>
 
         <div className="mt-6 bg-white p-4 rounded-lg shadow-md">
-          <p className="font-semibold text-custom-black">
-            {songData.songsName} Lyrics
-          </p>
-          <p className="text-custom-black font-bold pt-6">[Intro]</p>
+          <p className="text-custom-black font-bold">[Intro]</p>
           {/* Lyrics */}
           <div>
             {songData.lirik.split("\n").map((line, index) => (
