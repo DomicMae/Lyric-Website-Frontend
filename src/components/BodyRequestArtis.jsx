@@ -1,25 +1,25 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../input.css";
 
 const BodyRequestArtis = () => {
-  // State for artist name input
-  const [artis, setArtis] = useState("");
+  const [artis, setArtis] = useState(""); // State for artist name input
   const [loading, setLoading] = useState(false); // To show loading state
   const [message, setMessage] = useState(null); // To show success/error message
+  const [showModal, setShowModal] = useState(false); // State for showing modal
+  const navigate = useNavigate(); // React Router's useNavigate hook
 
   // Function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Data to add artist
     const artistData = {
-      artistName: String(artis), // Convert artist name to string
+      artistName: String(artis),
     };
 
     setLoading(true); // Set loading state
 
     try {
-      // Send POST request to add the artist
       const response = await fetch(
         "https://website-lirik-c51g.vercel.app/api/artists",
         {
@@ -36,12 +36,12 @@ const BodyRequestArtis = () => {
         throw new Error(`Error: ${response.statusText}`);
       }
 
-      // Convert response to JSON
       const data = await response.json();
       console.log("Artist successfully created:", data);
 
-      // Show success message
+      // Show success message and modal
       setMessage("Artis berhasil ditambahkan!");
+      setShowModal(true); // Show the modal
 
       // Clear input field
       setArtis("");
@@ -51,6 +51,12 @@ const BodyRequestArtis = () => {
     } finally {
       setLoading(false); // Stop loading
     }
+  };
+
+  // Function to handle closing the modal and navigating to /admins
+  const handleModalClose = () => {
+    setShowModal(false); // Hide the modal
+    navigate("/admins"); // Redirect to /admins
   };
 
   return (
@@ -63,7 +69,7 @@ const BodyRequestArtis = () => {
           </h1>
 
           {/* Success/Error Message */}
-          {message && (
+          {message && !showModal && (
             <div
               className={`${
                 message.includes("berhasil") ? "text-green-500" : "text-red-500"
@@ -103,6 +109,23 @@ const BodyRequestArtis = () => {
           </form>
         </div>
       </div>
+
+      {/* Modal Section */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-8 rounded-xl shadow-lg text-center">
+            <h2 className="text-2xl font-bold mb-4">
+              Artis berhasil ditambahkan!
+            </h2>
+            <button
+              onClick={handleModalClose} // Close modal and redirect
+              className="px-6 py-2 text-lg font-bold text-white bg-blue-500 rounded-xl hover:bg-blue-600"
+            >
+              Selesai
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

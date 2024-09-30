@@ -9,6 +9,7 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RequestArtis from "./pages/RequestArtis";
+import HomePageAdmin from "./pages/HomePageAdmin";
 
 function App() {
   return (
@@ -18,6 +19,14 @@ function App() {
         <Route path="/lyrics/:songId" element={<Lyrics />} />
         <Route
           path="/admins"
+          element={
+            <ProtectedRoute>
+              <HomePageAdmin />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/addLagu"
           element={
             <ProtectedRoute>
               <RequestLagu />

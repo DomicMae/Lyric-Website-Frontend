@@ -44,7 +44,7 @@ const BodyRequestLagu = () => {
 
         if (foundArtist) {
           setArtistId(foundArtist.artistId); // Set artist ID if found
-          setArtistCheckMessage("Artis ditemukan! ID otomatis terisi.");
+          setArtistCheckMessage("Artis ditemukan!");
           setArtisExist(true);
         } else {
           setArtistCheckMessage("Data tidak ditemukan.");

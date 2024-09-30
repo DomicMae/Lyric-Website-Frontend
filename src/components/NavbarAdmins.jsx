@@ -20,7 +20,7 @@ const NavbarAdmins = () => {
     localStorage.removeItem("user");
 
     // Redirect to the login page
-    navigate("/login");
+    navigate("/");
   };
 
   return (
@@ -28,7 +28,7 @@ const NavbarAdmins = () => {
       <div className="items-center pr-6 pl-6">
         {/* Left side: Music Lyrics button */}
         <div className="col-span-1 flex justify-start">
-          <a href="/" className="flex items-center font-bold">
+          <a href="/admins" className="flex items-center font-bold">
             <button className="text-custom-black text-xl font-bold font-jakarta">
               Music Lyrics
             </button>
@@ -40,7 +40,7 @@ const NavbarAdmins = () => {
         <ul className="">
           <li>
             <a
-              href="/admins"
+              href="/addLagu"
               className="text-custom-black text-base font-bold font-jakarta"
             >
               Add Lagu
@@ -62,15 +62,15 @@ const NavbarAdmins = () => {
       <div className="col-span-1 flex justify-end items-center space-x-4">
         {username ? (
           <>
+            <div className="text-custom-black text-base font-bold font-jakarta">
+              Welcome, {username}!
+            </div>
             <button
               onClick={handleLogout}
               className="text-white text-base font-bold font-jakarta bg-red-500 hover:bg-red-600 px-4 py-2 rounded"
             >
               Logout
             </button>
-            <div className="text-custom-black text-base font-bold font-jakarta">
-              Welcome, {username}!
-            </div>
           </>
         ) : (
           <a
