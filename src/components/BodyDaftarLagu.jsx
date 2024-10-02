@@ -47,12 +47,12 @@ const BodyDaftarLagu = () => {
 
   return (
     <div className="text-black">
-      <h1 className="text-4xl font-bold sm:text-5xl text-custom-black pb-8 px-10">
+      <h1 className="text-4xl font-bold sm:text-5xl text-custom-black pb-8 px-4 sm:px-10">
         Daftar Lagu
       </h1>
 
       {/* Alphabet Song List with Horizontal Scroll */}
-      <div className="mt-6 px-10">
+      <div className="mt-6 px-4 sm:px-11">
         <div className="overflow-x-auto">
           <div className="flex gap-2">
             {[
@@ -100,7 +100,7 @@ const BodyDaftarLagu = () => {
       </div>
 
       {/* Display Filtered Songs */}
-      <div className="grid grid-cols-6 gap-4 p-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4 p-4 sm:p-10">
         {
           filteredSongs.length > 0 ? (
             filteredSongs.map((song) => (
@@ -118,8 +118,9 @@ const BodyDaftarLagu = () => {
                 </div>
               </div>
             ))
-          ) : isLetterSelected ? ( // Show message only if a letter is selected
-            <div className="col-span-6 text-center text-lg font-medium text-red-500">
+          ) : isLetterSelected ? (
+            // Show message if a letter is selected and no songs are found
+            <div className="col-span-6 text-center text-lg font-medium text-red-500 mt-4">
               Tidak ada lagu yang diawali dengan huruf "{selectedLetter}"
             </div>
           ) : null /* Do not show any message initially */

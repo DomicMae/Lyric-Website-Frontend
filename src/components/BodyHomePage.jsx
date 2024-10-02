@@ -29,15 +29,15 @@ const BodyHomePage = () => {
   };
 
   return (
-    <div className="text-black pt-5 pb-10 ">
-      <div className="grid grid-cols-2 gap-4 p-10 items-center">
+    <div className="text-black pt-8 sm:pt-1 pb-10 ">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 sm:p-10 items-center">
         {" "}
         {/* Add items-center to align items vertically */}
         <div className="col-span-1 flex flex-col">
           {" "}
           {/* Center content horizontally */}
           {/* Title */}
-          <h1 className="text-4xl font-bold sm:text-5xl text-custom-black pb-4">
+          <h1 className="text-4xl font-bold sm:text-6xl text-custom-black pb-4">
             Music Lyrics
           </h1>
           {/* Description */}
@@ -69,7 +69,7 @@ const BodyHomePage = () => {
         {/* Right side (image) */}
         <div className="col-span-1 flex justify-center">
           <img
-            src="/Playing_Guitar.png"
+            src="/PlayGuitarBoy.svg"
             alt="Playing Guitar"
             className="max-w-full h-auto"
           />

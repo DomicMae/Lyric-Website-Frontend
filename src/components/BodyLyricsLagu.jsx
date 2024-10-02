@@ -52,42 +52,40 @@ const BodyLyricsLagu = () => {
   }
 
   return (
-    <div className="text-black pt-10 pb-5 font-jakarta">
+    <div className="text-black pt-3 pb-5 font-jakarta">
       <div className="gap-4 p-5">
-        {/* Left Column: Music Icon */}
-        <div className="flex items-center">
-          <div className="mr-5">
+        {/* Container to handle layout on different screen sizes */}
+        <div className="flex flex-col md:flex-row items-start md:items-center">
+          {/* Left Column: Music Icon */}
+          <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-5">
             {/* Music Icon or Image */}
-            <div className="w-20 h-20 bg-custom-blue-seas rounded-lg flex items-center justify-center shadow-md">
-              <Music className="w-12 h-12 text-white" />
+            <div className="w-16 h-16 md:w-20 md:h-20 bg-custom-blue-seas rounded-lg flex items-center justify-center shadow-md">
+              <Music className="w-8 h-8 md:w-12 md:h-12 text-white" />
             </div>
           </div>
+
           {/* Song Details */}
-          <div className="flex justify-between items-start space-x-8">
-            {/* Left side: Title and Artist */}
-            <div>
-              <h1 className="text-4xl font-bold text-custom-black">
-                {songData.songsName}
-              </h1>
-              {/* Display the fetched artist name */}
-              <p className="text-lg font-semibold text-custom-blue-black">
-                {artistName || "Unknown Artist"} {/* Display artistName */}
-              </p>
-              <a
-                href={songData.songsLink}
-                target="_blank" // Open in a new tab
-                rel="noopener noreferrer" // For security reasons
-                className="text-custom-blue-black" // Styling the link
-              >
-                {songData.songsLink}
-              </a>
-            </div>
+          <div className="w-full">
+            <h1 className="text-2xl md:text-4xl font-bold text-custom-black">
+              {songData.songsName}
+            </h1>
+            <p className="text-lg font-semibold text-custom-blue-black">
+              {artistName || "Unknown Artist"} {/* Display artistName */}
+            </p>
+            <a
+              href={songData.songsLink}
+              target="_blank" // Open in a new tab
+              rel="noopener noreferrer" // For security reasons
+              className="text-custom-blue-black break-all" // Styling the link with break-all for better mobile view
+            >
+              {songData.songsLink}
+            </a>
           </div>
         </div>
 
+        {/* Lyrics Section */}
         <div className="mt-6 bg-white p-4 rounded-lg shadow-md">
           <p className="text-custom-black font-bold">[Intro]</p>
-          {/* Lyrics */}
           <div>
             {songData.lirik.split("\n").map((line, index) => (
               <p key={index}>{line}</p>

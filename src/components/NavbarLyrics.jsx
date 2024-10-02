@@ -1,72 +1,67 @@
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "../input.css";
-import { Search } from "lucide-react";
-import { useState } from "react"; // Import useState
-import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const NavbarLyrics = () => {
-  const [searchTerm, setSearchTerm] = useState(""); // State to track the input value
-  const navigate = useNavigate(); // React Router's useNavigate hook
-
-  // Function to handle input change
-  const handleInputChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  // Function to handle search when the button is clicked
-  const handleSearch = () => {
-    if (searchTerm) {
-      navigate(`/songs?search=${searchTerm}`); // Navigate to results page with search query
-    } else {
-      alert("Silakan masukkan judul lagu.");
-    }
-  };
-
-  // Function to handle Enter key press
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      handleSearch(); // Trigger search when Enter is pressed
-    }
-  };
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <nav className="navbar grid grid-cols-2 bg-custom-blue-seas dark:bg-custom-blue-seas p-5 px-14 ">
-      <div className="col-span-1 items-center space-x-8">
-        {/* Logo or Title */}
-        <a href="/" className="flex items-center font-bold ">
-          <button className="text-custom-black text-xl font-bold font-jakarta">
-            Music Lyrics
-          </button>
-        </a>
+    <nav className="bg-custom-blue-seas dark:bg-custom-blue-seas p-5 px-7 md:px-14">
+      <div className="flex justify-between items-center">
+        {/* Left side: Music Lyrics button */}
+        <Link
+          to="/"
+          className="text-lg md:text-xl font-bold text-custom-black font-jakarta"
+        >
+          Music Lyrics
+        </Link>
 
-        {/* Navigation Links */}
-        <ul className="flex space-x-8 items-center font-bold">
+        {/* Center: Daftar Lagu on larger screens */}
+        <div className="hidden md:flex space-x-8 ml-auto">
+          <Link
+            to="/daftarLagu"
+            className="text-custom-black text-sm md:text-base font-bold font-jakarta"
+          >
+            Daftar Lagu
+          </Link>
+        </div>
+
+        {/* Hamburger menu for mobile screens */}
+        <button
+          className="block md:hidden text-custom-black font-bold focus:outline-none"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          {/* Menu Icon (Hamburger) */}
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M4 6h16M4 12h16m-7 6h7"
+            ></path>
+          </svg>
+        </button>
+      </div>
+
+      {/* Mobile menu - Toggle visibility based on state */}
+      <div className={`md:hidden ${isMenuOpen ? "block" : "hidden"} mt-4`}>
+        <ul className="space-y-4">
           <li>
-            <button className="text-custom-black text-base font-bold font-jakarta">
+            <Link
+              to="/daftarLagu"
+              className="block text-custom-black text-base font-medium"
+              onClick={() => setIsMenuOpen(false)}
+            >
               Daftar Lagu
-            </button>
+            </Link>
           </li>
         </ul>
-      </div>
-      {/* Right: Search Input and Button */}
-      <div className="col-span-1 flex justify-end items-center space-x-2">
-        <div className="relative ">
-          <input
-            type="text"
-            value={searchTerm} // Bind input value to state
-            onChange={handleInputChange} // Handle input change
-            onKeyPress={handleKeyPress} // Handle Enter key press
-            placeholder="Search..."
-            className="bg-custom-blue-white p-2 pr-10 text-custom-blue-black rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-blue-black w-full"
-          />
-          <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-            <button
-              onClick={handleSearch} // Call search function on button click
-              className="text-custom-black font-bold p-2 bg-custom-blue-white rounded-lg hover:bg-gray-300"
-            >
-              <Search />
-            </button>
-          </div>
-        </div>
       </div>
     </nav>
   );

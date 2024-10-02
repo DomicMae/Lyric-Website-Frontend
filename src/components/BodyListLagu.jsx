@@ -1,4 +1,5 @@
 import "../input.css";
+import { Search } from "lucide-react"; // Import the Search icon
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
@@ -6,14 +7,37 @@ const BodyListLagu = () => {
   const [songs, setSongs] = useState([]); // State to hold the list of songs
   const [loading, setLoading] = useState(true); // State to handle loading
   const [apiSongs, setApiSongs] = useState([]); // State to hold songs from the second API
-  const [searchParams] = useSearchParams(); // React Router's hook to get query params
+  const [searchParams, setSearchParams] = useSearchParams(); // React Router's hook to get query params
   const navigate = useNavigate(); // Hook for navigation
 
   const searchTerm = searchParams.get("search") || ""; // Get the search term from URL
+  const [searchTerm1, setSearchTerm1] = useState(searchTerm); // State to track the input value
+
+  // Function to handle input change
+  const handleInputChange = (e) => {
+    setSearchTerm1(e.target.value); // Update input state
+  };
+
+  // Function to handle search when the button is clicked
+  const handleSearch = () => {
+    if (searchTerm1) {
+      setSearchParams({ search: searchTerm1 }); // Update URL query params
+    } else {
+      alert("Silakan masukkan judul lagu.");
+    }
+  };
+
+  // Function to handle Enter key press
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSearch(); // Trigger search when Enter is pressed
+    }
+  };
 
   // Fetch songs with artist names based on search term
   useEffect(() => {
     const fetchSongs = async () => {
+      setLoading(true); // Set loading to true while fetching data
       try {
         // Fetch songsWithArtist data
         const response = await fetch(
@@ -22,9 +46,9 @@ const BodyListLagu = () => {
         const data = await response.json();
 
         if (data.statusCode === 200) {
-          // Filter songs that start with the search term
+          // Filter songs that match the search term
           const filteredSongs = data.data.filter((song) =>
-            song.songsName.toLowerCase().startsWith(searchTerm.toLowerCase())
+            song.songsName.toLowerCase().includes(searchTerm.toLowerCase())
           );
 
           setSongs(filteredSongs);
@@ -77,12 +101,60 @@ const BodyListLagu = () => {
   }
 
   if (songs.length === 0) {
-    return <p>No songs found that start with "{searchTerm}"!</p>; // Handle no results
+    return (
+      <div className="text-black pb-5 font-jakarta">
+        <div className="grid grid-cols-1 gap-4 p-10">
+          <ul>
+            <li className="relative w-full">
+              <input
+                type="text"
+                value={searchTerm1}
+                onChange={handleInputChange}
+                onKeyPress={handleKeyPress}
+                placeholder="Search..."
+                className="bg-custom-blue-white p-2 pr-10 text-custom-blue-black rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-blue-black w-full"
+              />
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                <button
+                  onClick={handleSearch}
+                  className="text-custom-black font-bold p-2 bg-custom-blue-white rounded-lg hover:bg-gray-300"
+                >
+                  <Search />
+                </button>
+              </div>
+            </li>
+          </ul>
+          <p className="text-black mt-4">
+            No songs found that match "{searchTerm}"!
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="text-black pt-10 pb-5 font-jakarta">
+    <div className="text-black pb-5 font-jakarta">
       <div className="grid grid-cols-1 gap-4 p-10">
+        <ul>
+          <li className="relative w-full">
+            <input
+              type="text"
+              value={searchTerm1}
+              onChange={handleInputChange}
+              onKeyPress={handleKeyPress}
+              placeholder="Search..."
+              className="bg-custom-blue-white p-2 pr-10 text-custom-blue-black rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-blue-black w-full"
+            />
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+              <button
+                onClick={handleSearch}
+                className="text-custom-black font-bold p-2 bg-custom-blue-white rounded-lg hover:bg-gray-300"
+              >
+                <Search />
+              </button>
+            </div>
+          </li>
+        </ul>
         {songs.map((song) => (
           <div
             key={song._id}
