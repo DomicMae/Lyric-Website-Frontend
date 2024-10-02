@@ -72,68 +72,66 @@ const BodyLogin = () => {
   };
 
   return (
-    <div className="text-black pt-5 pb-5">
-      <div className="gap-4 p-10 w-full justify-center">
-        <div className="flex-col">
-          <h1 className="text-4xl font-bold sm:text-5xl text-custom-black pb-8">
-            Login User
-          </h1>
+    <div className="text-black">
+      <div className="gap-4 p-2 w-full flex flex-col items-center justify-center">
+        <h1 className="text-4xl font-bold sm:text-5xl text-custom-black pb-8">
+          Login User
+        </h1>
 
-          {/* Success/Error Message */}
-          {message && (
-            <div
-              className={`${
-                message.includes("berhasil") ? "text-green-500" : "text-red-500"
-              } pb-4`}
+        {/* Success/Error Message */}
+        {message && (
+          <div
+            className={`${
+              message.includes("berhasil") ? "text-green-500" : "text-red-500"
+            } pb-4`}
+          >
+            {message}
+          </div>
+        )}
+
+        {/* Form Section */}
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          {/* Username Input */}
+          <div>
+            <label className="block text-lg font-medium text-custom-black mb-2">
+              Username
+            </label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Masukkan username"
+              className="w-full max-w-md h-14 px-6 py-2 text-lg text-custom-black rounded-xl shadow-md focus:outline-none bg-custom-blue-white"
+              required
+            />
+          </div>
+
+          {/* Password Input */}
+          <div>
+            <label className="block text-lg font-medium text-custom-black mb-2">
+              Password
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Masukkan password"
+              className="w-full max-w-md h-14 px-6 py-2 text-lg text-custom-black rounded-xl shadow-md focus:outline-none bg-custom-blue-white"
+              required
+            />
+          </div>
+
+          {/* Submit Button */}
+          <div className="">
+            <button
+              type="submit"
+              className="w-full px-6 py-3 text-lg font-bold text-white bg-custom-blue-seas rounded-xl shadow-md hover:bg-blue-600"
+              disabled={loading}
             >
-              {message}
-            </div>
-          )}
-
-          {/* Form Section */}
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {/* Username Input */}
-            <div>
-              <label className="block text-lg font-medium text-custom-black mb-2">
-                Username
-              </label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Masukkan username"
-                className="w-full max-w-md h-14 px-6 py-2 text-lg text-custom-black rounded-xl shadow-md focus:outline-none bg-custom-blue-white"
-                required
-              />
-            </div>
-
-            {/* Password Input */}
-            <div>
-              <label className="block text-lg font-medium text-custom-black mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Masukkan password"
-                className="w-full max-w-md h-14 px-6 py-2 text-lg text-custom-black rounded-xl shadow-md focus:outline-none bg-custom-blue-white"
-                required
-              />
-            </div>
-
-            {/* Submit Button */}
-            <div className="">
-              <button
-                type="submit"
-                className="px-6 py-2 text-lg font-bold text-white bg-custom-blue-seas rounded-xl shadow-md hover:bg-blue-600"
-                disabled={loading}
-              >
-                {loading ? "Logging in..." : "Login"}
-              </button>
-            </div>
-          </form>
-        </div>
+              {loading ? "Logging in..." : "Login"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

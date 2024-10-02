@@ -7,7 +7,7 @@ export default function Lyrics(props) {
     <div className="min-h-screen flex flex-col bg-custom-blue">
       <NavbarLyrics className="px-10" />
       <main className="flex-grow">
-        <section id="body-lyrics" className="px-10">
+        <section id="body-lyrics" className="px-2 sm:px-10">
           <BodyLyricsLagu />
         </section>
       </main>

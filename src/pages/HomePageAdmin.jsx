@@ -7,7 +7,7 @@ export default function HomePageAdmin(props) {
     <div className="min-h-screen flex flex-col bg-custom-blue">
       <NavbarAdmins />
       <main className="flex-grow">
-        <section id="body-home" className="px-10">
+        <section id="body-home" className="">
           <BodyHomePageAdmin />
         </section>
       </main>

@@ -90,15 +90,14 @@ const BodyHomePageAdmin = () => {
     return artist ? artist.artistName : "Unknown Artist";
   };
 
-  // Action button handler (example)
+  // Action button handler
   const handleEdit = (songId) => {
-    alert(`Editing song with ID: ${songId}`);
-    // You can add navigation or any logic here
+    navigate(`/editLagu/${songId}`); // Navigate to the edit page with the song ID in the URL
   };
 
   return (
     <div className="text-black pt-5 pb-10">
-      <div className="grid grid-cols-2 gap-4 p-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-10">
         <div className="col-span-1 flex-col">
           {/* Input box and search button */}
           <div className="relative mt-4 shadow-xl">
@@ -127,75 +126,79 @@ const BodyHomePageAdmin = () => {
         {loading ? (
           <p>Loading...</p>
         ) : (
-          <table className="min-w-full bg-custom-blue-white rounded-md">
-            <thead>
-              <tr>
-                <th>Number</th>
-                <th
-                  className="py-2 cursor-pointer"
-                  onClick={() => handleSort("songsName")}
-                >
-                  Title{" "}
-                  {sortConfig.key === "songsName"
-                    ? sortConfig.direction === "asc"
-                      ? "▲"
-                      : "▼"
-                    : ""}
-                </th>
-                <th
-                  className="py-2 cursor-pointer"
-                  onClick={() => handleSort("artistId")}
-                >
-                  Artist{" "}
-                  {sortConfig.key === "artistId"
-                    ? sortConfig.direction === "asc"
-                      ? "▲"
-                      : "▼"
-                    : ""}
-                </th>
-                <th>Lyrics</th>
-                <th className="py-2">Link</th>
-                <th className="py-2">Status</th>
-                <th className="py-2">Action</th> {/* Action column */}
-              </tr>
-            </thead>
-            <tbody>
-              {sortedSongsData.map((song, index) => (
-                <tr key={song._id} className="text-center">
-                  <td className="py-2">{index + 1}</td>
-                  <td className="py-2">{song.songsName}</td>
-                  <td className="py-2">{getArtistName(song.artistId)}</td>
-                  <td className="py-2">
-                    {song.lirik.length > 20
-                      ? song.lirik.slice(0, 20) + "..."
-                      : song.lirik}
-                  </td>
-                  <td className="py-2">
-                    <a
-                      href={song.songsLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {song.songsLink.length > 20
-                        ? song.songsLink.slice(0, 20) + "..."
-                        : song.songsLink}
-                    </a>
-                  </td>
-                  <td className="py-2">
-                    {song.status ? "Active" : "Inactive"}
-                  </td>
-                  <td className="py-2">
-                    <button
-                      onClick={() => handleEdit(song._id)}
-                      className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600"
-                    >
-                      Edit
-                    </button>
-                  </td>
+          <div className="overflow-x-auto">
+            {" "}
+            {/* Enable horizontal scrolling */}
+            <table className="min-w-full bg-custom-blue-white rounded-md">
+              <thead>
+                <tr>
+                  <th>Number</th>
+                  <th
+                    className="py-2 cursor-pointer"
+                    onClick={() => handleSort("songsName")}
+                  >
+                    Title{" "}
+                    {sortConfig.key === "songsName"
+                      ? sortConfig.direction === "asc"
+                        ? "▲"
+                        : "▼"
+                      : ""}
+                  </th>
+                  <th
+                    className="py-2 cursor-pointer"
+                    onClick={() => handleSort("artistId")}
+                  >
+                    Artist{" "}
+                    {sortConfig.key === "artistId"
+                      ? sortConfig.direction === "asc"
+                        ? "▲"
+                        : "▼"
+                      : ""}
+                  </th>
+                  <th>Lyrics</th>
+                  <th className="py-2">Link</th>
+                  <th className="py-2">Status</th>
+                  <th className="py-2">Action</th> {/* Action column */}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {sortedSongsData.map((song, index) => (
+                  <tr key={song._id} className="text-center">
+                    <td className="py-2">{index + 1}</td>
+                    <td className="py-2">{song.songsName}</td>
+                    <td className="py-2">{getArtistName(song.artistId)}</td>
+                    <td className="py-2">
+                      {song.lirik.length > 20
+                        ? song.lirik.slice(0, 20) + "..."
+                        : song.lirik}
+                    </td>
+                    <td className="py-2">
+                      <a
+                        href={song.songsLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {song.songsLink.length > 20
+                          ? song.songsLink.slice(0, 20) + "..."
+                          : song.songsLink}
+                      </a>
+                    </td>
+                    <td className="py-2">
+                      {song.status ? "Active" : "Inactive"}
+                    </td>
+                    <td className="py-2">
+                      <button
+                        onClick={() => handleEdit(song.songId)}
+                        className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600"
+                      >
+                        Edit
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>

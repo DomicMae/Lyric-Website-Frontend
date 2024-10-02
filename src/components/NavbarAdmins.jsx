@@ -1,9 +1,11 @@
 import "../input.css";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Menu, X } from "lucide-react"; // Import icons
 
 const NavbarAdmins = () => {
   const [username, setUsername] = useState(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // State to track menu open/close
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,55 +25,67 @@ const NavbarAdmins = () => {
     navigate("/");
   };
 
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen); // Toggle the menu open/close state
+  };
+
   return (
-    <nav className="navbar grid grid-cols-3  bg-custom-blue-seas dark:bg-custom-blue-seas p-5 px-14">
-      <div className="items-center pr-6 pl-6">
-        {/* Left side: Music Lyrics button */}
-        <div className="col-span-1 flex justify-start">
-          <a href="/admins" className="flex items-center font-bold">
-            <button className="text-custom-black text-xl font-bold font-jakarta">
-              Music Lyrics
-            </button>
-          </a>
-        </div>
+    <nav className="navbar bg-custom-blue-seas dark:bg-custom-blue-seas p-5 px-4 md:px-14 flex justify-between items-center">
+      {/* Left side: Music Lyrics button */}
+      <div className="flex items-center">
+        <a href="/admins" className="font-bold">
+          <button className="text-custom-black text-xl font-bold font-jakarta">
+            Music Lyrics
+          </button>
+        </a>
       </div>
-      {/* Center: Add Lagu and Add Artis */}
-      <div className="col-span-1 flex justify-center items-center space-x-8">
-        <ul className="">
+
+      {/* Hamburger Menu Icon (visible on mobile only) */}
+      <div className="md:hidden">
+        <button
+          onClick={toggleMenu}
+          className="text-custom-black focus:outline-none"
+        >
+          {isMenuOpen ? <X size={32} /> : <Menu size={32} />}{" "}
+          {/* Show X when open */}
+        </button>
+      </div>
+
+      {/* Center and Right Links (hidden on mobile, visible on larger screens) */}
+      <div className="hidden md:flex space-x-8 items-center">
+        {/* Center: Add Lagu and Add Artis */}
+        <ul className="flex space-x-8">
           <li>
             <a
               href="/addLagu"
               className="text-custom-black text-base font-bold font-jakarta"
             >
-              Add Lagu
+              Lagu
             </a>
           </li>
-        </ul>
-        <ul className="">
           <li>
             <a
               href="/addArtis"
               className="text-custom-black text-base font-bold font-jakarta"
             >
-              Add Artis
+              Artis
             </a>
           </li>
         </ul>
-      </div>
-      {/* Right side: Display username if logged in */}
-      <div className="col-span-1 flex justify-end items-center space-x-4">
+
+        {/* Right: Username and Logout */}
         {username ? (
-          <>
-            <div className="text-custom-black text-base font-bold font-jakarta">
+          <div className="flex items-center space-x-4">
+            <span className="text-custom-black text-base font-bold font-jakarta">
               Welcome, {username}!
-            </div>
+            </span>
             <button
               onClick={handleLogout}
-              className="text-white text-base font-bold font-jakarta bg-red-500 hover:bg-red-600 px-4 py-2 rounded"
+              className="text-white bg-red-500 hover:bg-red-600 px-4 py-2 rounded font-bold font-jakarta"
             >
               Logout
             </button>
-          </>
+          </div>
         ) : (
           <a
             href="/login"
@@ -81,6 +95,68 @@ const NavbarAdmins = () => {
           </a>
         )}
       </div>
+
+      {/* Mobile Sidebar Menu (opens from the right) */}
+      <div
+        className={`fixed top-0 right-0 h-full w-64 bg-custom-blue-seas shadow-lg transform ${
+          isMenuOpen ? "translate-x-0" : "translate-x-full"
+        } transition-transform duration-300 ease-in-out z-50 md:hidden`}
+      >
+        <div className="p-5">
+          <button
+            onClick={toggleMenu}
+            className="text-custom-black focus:outline-none mb-5"
+          >
+            <X size={32} /> {/* Close icon */}
+          </button>
+
+          <ul className="space-y-4">
+            <li>
+              <a
+                href="/addLagu"
+                className="text-custom-black text-base font-bold font-jakarta block"
+              >
+                Lagu
+              </a>
+            </li>
+            <li>
+              <a
+                href="/addArtis"
+                className="text-custom-black text-base font-bold font-jakarta block"
+              >
+                Artis
+              </a>
+            </li>
+          </ul>
+
+          {/* Mobile: Username and Logout */}
+          {username ? (
+            <div className="mt-8 space-y-4">
+              <button
+                onClick={handleLogout}
+                className="text-white bg-red-500 hover:bg-red-600 px-4 py-2 rounded w-full font-bold font-jakarta"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <a
+              href="/login"
+              className="text-custom-black text-base font-bold font-jakarta block"
+            >
+              Login
+            </a>
+          )}
+        </div>
+      </div>
+
+      {/* Overlay to close the sidebar */}
+      {isMenuOpen && (
+        <div
+          onClick={toggleMenu}
+          className="fixed inset-0 bg-black opacity-50 z-40 md:hidden"
+        ></div>
+      )}
     </nav>
   );
 };

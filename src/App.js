@@ -10,12 +10,16 @@ import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RequestArtis from "./pages/RequestArtis";
 import HomePageAdmin from "./pages/HomePageAdmin";
+import DaftarLagu from "./pages/DaftarLagu";
+import EditLagu from "./pages/EditLagu";
+import EditArtis from "./pages/EditArtis";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/daftarLagu" element={<DaftarLagu />} />
         <Route path="/lyrics/:songId" element={<Lyrics />} />
         <Route
           path="/admins"
@@ -34,10 +38,26 @@ function App() {
           }
         />
         <Route
+          path="/editLagu/:id"
+          element={
+            <ProtectedRoute>
+              <EditLagu />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/addArtis"
           element={
             <ProtectedRoute>
               <RequestArtis />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/editArtis"
+          element={
+            <ProtectedRoute>
+              <EditArtis />
             </ProtectedRoute>
           }
         />
