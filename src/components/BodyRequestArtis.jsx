@@ -4,7 +4,6 @@ import "../input.css";
 
 const BodyRequestArtis = () => {
   const [artis, setArtis] = useState(""); // State for artist name input
-  const [loading, setLoading] = useState(false); // To show loading state
   const [message, setMessage] = useState(null); // To show success/error message
   const [showModal, setShowModal] = useState(false); // State for showing modal
   const navigate = useNavigate(); // React Router's useNavigate hook
@@ -17,9 +16,32 @@ const BodyRequestArtis = () => {
       artistName: String(artis),
     };
 
-    setLoading(true); // Set loading state
-
     try {
+      // Step 1: Fetch all artists from the database
+      const allArtistsResponse = await fetch(
+        "https://website-lirik-c51g.vercel.app/api/artists", // Replace with your actual API endpoint for fetching all artists
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const allArtistsData = await allArtistsResponse.json();
+
+      // Step 2: Check if any artist name matches the input
+      const artistExists = allArtistsData.data.some(
+        (artist) => artist.artistName.toLowerCase() === artis.toLowerCase()
+      );
+
+      // Step 3: If artist exists, show alert and allow user to continue editing
+      if (artistExists) {
+        alert("Artis sudah ada di database!");
+        return;
+      }
+
+      // Step 4: Proceed with adding the artist if no duplicates found
       const response = await fetch(
         "https://website-lirik-c51g.vercel.app/api/artists",
         {
@@ -43,13 +65,11 @@ const BodyRequestArtis = () => {
       setMessage("Artis berhasil ditambahkan!");
       setShowModal(true); // Show the modal
 
-      // Clear input field
+      // Clear input field only after successful add
       setArtis("");
     } catch (error) {
       console.error("Error submitting artist data:", error);
       setMessage("Terjadi kesalahan saat menambahkan artis.");
-    } finally {
-      setLoading(false); // Stop loading
     }
   };
 
@@ -101,9 +121,8 @@ const BodyRequestArtis = () => {
               <button
                 type="submit"
                 className="px-6 py-2 text-lg font-bold text-white bg-custom-blue-seas rounded-xl shadow-md hover:bg-blue-600"
-                disabled={loading} // Disable button while loading
               >
-                {loading ? "Mengirim..." : "Tambahkan Artis"}
+                Tambahkan Artis
               </button>
             </div>
           </form>
