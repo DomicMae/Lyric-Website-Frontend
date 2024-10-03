@@ -1,81 +1,108 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import "../input.css";
 
 const BodyEditArtis = () => {
-  const [searchTerm, setSearchTerm] = useState(""); // State for artist search input
-  const [artis, setArtis] = useState(""); // State for new artist name input
+  const [artisName, setArtisName] = useState(""); // State for artist name input
   const [loading, setLoading] = useState(false); // To show loading state
   const [message, setMessage] = useState(null); // To show success/error message
   const [showModal, setShowModal] = useState(false); // State for showing modal
   const [artistId, setArtistId] = useState(null); // State for selected artist's ID
+  const { id } = useParams();
   const [artists, setArtists] = useState([]); // State for storing fetched artists
+  const [isArtistExists, setIsArtistExists] = useState(false); // State to check if artist exists
+  const [isCheckClicked, setIsCheckClicked] = useState(false); // New state to track if "Cek Nama Artis" has been clicked
   const navigate = useNavigate(); // React Router's useNavigate hook
 
-  // Function to search for artists based on the search term
-  const handleSearch = async (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    const fetchArtis = async () => {
+      setLoading(true);
 
-    setLoading(true);
-    try {
-      const response = await fetch(
-        "https://website-lirik-c51g.vercel.app/api/artists"
-      );
-      const data = await response.json();
+      try {
+        // Fetch current artist data by artistId
+        const artistResponse = await fetch(
+          `https://website-lirik-c51g.vercel.app/api/artists/${id}`
+        );
+        const artistData = await artistResponse.json();
 
-      // Filter artists based on the search term
-      const filteredArtists = data.data.filter((artist) =>
-        artist.artistName.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+        if (artistResponse.ok) {
+          setArtisName(artistData.data.artistName); // Set current artist name
+          setArtistId(artistData.data.artistId); // Set artist ID
+        } else {
+          setMessage("Artis tidak ditemukan.");
+        }
 
-      setArtists(filteredArtists); // Set the filtered artists to state
-      if (filteredArtists.length > 0) {
-        setMessage(`${filteredArtists.length} artis ditemukan.`);
-      } else {
-        setMessage("Tidak ada artis ditemukan.");
+        // Fetch all artists data for checking
+        const allArtistsResponse = await fetch(
+          "https://website-lirik-c51g.vercel.app/api/artists"
+        );
+        const allArtistsData = await allArtistsResponse.json();
+
+        if (allArtistsResponse.ok) {
+          setArtists(allArtistsData.data); // Set all artists to state
+        }
+      } catch (error) {
+        console.error("Error fetching artist data:", error);
+        setMessage("Terjadi kesalahan saat mengambil data artis.");
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching artists:", error);
-      setMessage("Terjadi kesalahan saat mengambil data artis.");
-    } finally {
-      setLoading(false);
+    };
+
+    fetchArtis();
+  }, [id]);
+
+  // Function to check if artist name exists in the database
+  const handleCheckArtist = () => {
+    const artistExists = artists.some(
+      (artist) => artist.artistName.toLowerCase() === artisName.toLowerCase()
+    );
+
+    if (artistExists) {
+      setMessage("Nama artis sudah ada, tidak bisa diperbarui.");
+      setIsArtistExists(true); // Disable submit button if artist exists
+    } else {
+      setMessage("Nama artis tersedia.");
+      setIsArtistExists(false); // Enable submit button if artist does not exist
     }
+
+    setIsCheckClicked(true); // Set check clicked to true after checking
   };
 
-  // Function to handle selecting an artist
-  const handleSelectArtist = (id, name) => {
-    setArtistId(id); // Set the selected artist's ID
-    setArtis(name); // Set the artist's name to be edited
-  };
+  // Reset check state when artisName changes
+  useEffect(() => {
+    setIsCheckClicked(false); // Reset check click state
+    setIsArtistExists(false); // Reset artist existence state
+    setMessage(null); // Clear message
+  }, [artisName]);
 
   // Function to handle form submission for updating the artist
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!artistId) {
-      setMessage("Silakan pilih artis terlebih dahulu.");
+    if (isArtistExists) {
+      setMessage("Nama artis sudah ada, silakan pilih nama yang lain.");
       return;
     }
 
     const artistData = {
-      artistName: String(artis),
+      artistName: String(artisName),
     };
 
-    setLoading(true); // Set loading state
+    setLoading(true);
 
     try {
       const response = await fetch(
-        `https://website-lirik-c51g.vercel.app/api/artists/${artistId}`, // Use PUT method to update artist
+        `https://website-lirik-c51g.vercel.app/api/artists/${artistId}`,
         {
-          method: "PUT", // Change to PUT for updating
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(artistData), // Send form data as JSON
+          body: JSON.stringify(artistData),
         }
       );
 
-      // Check if response is successful
       if (!response.ok) {
         throw new Error(`Error: ${response.statusText}`);
       }
@@ -83,26 +110,20 @@ const BodyEditArtis = () => {
       const data = await response.json();
       console.log("Artist successfully updated:", data);
 
-      // Show success message and modal
       setMessage("Artis berhasil diperbarui!");
-      setShowModal(true); // Show the modal
-
-      // Clear input field
-      setArtis("");
-      setArtistId(null); // Clear the artist ID
-      setArtists([]); // Clear the list of artists
+      setShowModal(true);
     } catch (error) {
       console.error("Error updating artist data:", error);
       setMessage("Terjadi kesalahan saat memperbarui artis.");
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
   // Function to handle closing the modal and navigating to /admins
   const handleModalClose = () => {
-    setShowModal(false); // Hide the modal
-    navigate("/admins"); // Redirect to /admins
+    setShowModal(false);
+    navigate("/admins");
   };
 
   return (
@@ -111,96 +132,64 @@ const BodyEditArtis = () => {
         Edit Artis
       </h1>
 
-      {/* Search Section */}
-      <form className="mb-4" onSubmit={handleSearch}>
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Cari nama artis"
-          className="w-64 h-14 px-4 text-lg text-custom-black rounded-xl shadow-md focus:outline-none bg-custom-blue-white"
-          required
-        />
-        <button
-          type="submit"
-          className="ml-2 px-4 py-2 text-lg font-bold text-white bg-custom-blue-seas rounded-xl shadow-md hover:bg-blue-600"
-          disabled={loading} // Disable button while loading
-        >
-          {loading ? "Mencari..." : "Cari"}
-        </button>
-      </form>
-
-      {/* Display Search Results */}
-      {artists.length > 0 && (
-        <div className="mb-4">
-          <h2 className="text-xl font-bold">Hasil Pencarian:</h2>
-          <ul className="list-disc pl-5">
-            {artists.map((artist) => (
-              <li
-                key={artist.artistId}
-                className="cursor-pointer"
-                onClick={() =>
-                  handleSelectArtist(artist.artistId, artist.artistName)
-                }
-              >
-                {artist.artistName}
-              </li>
-            ))}
-          </ul>
+      {/* Artist Name Input Section */}
+      <div className="space-y-6">
+        <div>
+          <label className="block text-lg font-medium text-custom-black mb-2">
+            Nama Artis
+          </label>
+          <input
+            type="text"
+            value={artisName}
+            onChange={(e) => setArtisName(e.target.value)}
+            placeholder="Nama artis"
+            className="w-full h-14 px-6 py-2 text-lg text-custom-black rounded-xl shadow-md focus:outline-none bg-custom-blue-white"
+            required
+          />
         </div>
-      )}
+      </div>
 
-      {/* Success/Error Message */}
-      {message && !showModal && (
+      {/* Check Artist Button */}
+      <button
+        onClick={handleCheckArtist}
+        className="mt-4 px-6 py-2 text-lg font-bold text-white bg-blue-500 rounded-xl hover:bg-blue-600"
+      >
+        Cek Nama Artis
+      </button>
+
+      {/* Message Section */}
+      {message && (
         <div
-          className={`${
-            message.includes("berhasil") ? "text-green-500" : "text-red-500"
-          } pb-4`}
+          className={`mt-4 ${
+            message.includes("berhasil") || message.includes("tersedia")
+              ? "text-green-500"
+              : "text-red-500"
+          }`}
         >
           {message}
         </div>
       )}
 
-      {/* Form Section for Editing Selected Artist */}
-      {artistId && (
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          {/* Artist Name Input */}
-          <div>
-            <label className="block text-lg font-medium text-custom-black mb-2">
-              Nama Artis Baru
-            </label>
-            <input
-              type="text"
-              value={artis}
-              onChange={(e) => setArtis(e.target.value)}
-              placeholder="Masukkan nama artis baru"
-              className="w-full h-14 px-6 py-2 text-lg text-custom-black rounded-xl shadow-md focus:outline-none bg-custom-blue-white"
-              required
-            />
-          </div>
-
-          {/* Submit Button */}
-          <div className="flex justify-center">
-            <button
-              type="submit"
-              className="px-6 py-2 text-lg font-bold text-white bg-custom-blue-seas rounded-xl shadow-md hover:bg-blue-600"
-              disabled={loading} // Disable button while loading
-            >
-              {loading ? "Mengirim..." : "Perbarui Artis"}
-            </button>
-          </div>
-        </form>
-      )}
+      {/* Submit Button (disabled if artist exists or check not clicked) */}
+      <form className="mt-6" onSubmit={handleSubmit}>
+        <button
+          type="submit"
+          className={`px-6 py-2 text-lg font-bold text-white bg-green-500 rounded-xl hover:bg-green-600 ${
+            isArtistExists || !isCheckClicked || loading ? "opacity-20" : ""
+          }`}
+          disabled={isArtistExists || !isCheckClicked || loading} // Disabled until check is clicked
+        >
+          {loading ? "Mengirim..." : "Perbarui Artis"}
+        </button>
+      </form>
 
       {/* Modal Section */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-8 rounded-xl shadow-lg text-center">
-            <h2 className="text-2xl font-bold mb-4">
-              Artis berhasil diperbarui!
-            </h2>
+            <h2 className="text-2xl font-bold mb-4">Artis berhasil diperbarui!</h2>
             <button
-              onClick={handleModalClose} // Close modal and redirect
+              onClick={handleModalClose}
               className="px-6 py-2 text-lg font-bold text-white bg-blue-500 rounded-xl hover:bg-blue-600"
             >
               Selesai
