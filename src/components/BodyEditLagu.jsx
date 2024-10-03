@@ -1,106 +1,88 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Select from "react-select"; // Import Select from react-select
 import "../input.css";
 
 const BodyEditLagu = () => {
   // State for each input field
   const [judulLagu, setJudulLagu] = useState("");
-  const [artis, setArtis] = useState("");
+  const [artisOptions, setArtisOptions] = useState([]); // State for artist options
+  const [selectedArtis, setSelectedArtis] = useState(null); // State for selected artist
   const [lirikLagu, setLirikLagu] = useState("");
   const [songsLink, setsongsLink] = useState("");
-  const [artistId, setArtistId] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Set loading to true initially
   const [message, setMessage] = useState(null);
-  const [artistCheckMessage, setArtistCheckMessage] = useState("");
-  const [artistExist, setArtisExist] = useState(false);
-  const [CheckArtist, setCheckArtist] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
+  const [newArtistName, setNewArtistName] = useState(""); // State for new artist name
 
   const navigate = useNavigate();
   const { id } = useParams(); // Catch the song ID from the URL
 
-  // Function to check artist by name
-  const checkArtist = async () => {
-    setLoading(true);
-    setCheckArtist(true);
-    try {
-      const response = await fetch(
-        "https://website-lirik-c51g.vercel.app/api/artists"
-      );
-      const result = await response.json();
-
-      if (result && result.data) {
-        const artists = result.data;
-        const normalizedInput = artis.toLowerCase().trim();
-        const foundArtist = artists.find(
-          (artist) => artist.artistName.toLowerCase().trim() === normalizedInput
-        );
-
-        setLoading(false);
-
-        if (foundArtist) {
-          setArtistId(foundArtist.artistId);
-          setArtistCheckMessage("Artis ditemukan!");
-          setArtisExist(true);
+  // Fetch song details and artist options when component mounts
+  useEffect(() => {
+    const fetchSongDetailsAndArtists = async () => {
+      try {
+        // Fetching artists
+        const artistsResponse = await fetch("https://website-lirik-c51g.vercel.app/api/artists");
+        const artistsResult = await artistsResponse.json();
+        
+        if (artistsResult && artistsResult.data) {
+          // Format data for react-select
+          const options = artistsResult.data.map(artist => ({
+            value: artist.artistId,
+            label: artist.artistName,
+          }));
+          // Add "Tambah Baru" option
+          options.push({ value: "add_new", label: "Tambah Baru" });
+          setArtisOptions(options);
         } else {
-          setArtistCheckMessage("Data tidak ditemukan.");
-          setArtistId("");
-          setArtisExist(false);
+          setMessage("Tidak ada data artis yang ditemukan.");
         }
-      } else {
-        setLoading(false);
-        setArtistCheckMessage("Tidak ada data artis yang ditemukan.");
-        setArtisExist(false);
+
+        // Fetching song details
+        const songResponse = await fetch(`https://website-lirik-c51g.vercel.app/api/songs/${id}`);
+        const songResult = await songResponse.json();
+        
+        if (songResult && songResult.data) {
+          const song = songResult.data;
+          setJudulLagu(song.songsName);
+          setSelectedArtis({ value: song.artistId, label: song.artist.artistName }); // Set selected artist
+          setLirikLagu(song.lirik);
+          setsongsLink(song.songsLink);
+        } else {
+          setMessage("Data lagu tidak ditemukan.");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setMessage("Terjadi kesalahan saat mengambil data.");
+      } finally {
+        setLoading(false); // Set loading to false when done
       }
-    } catch (error) {
-      setLoading(false);
-      setArtistCheckMessage("Terjadi kesalahan saat memeriksa nama artis.");
-      console.error("Error checking artist:", error);
+    };
+
+    fetchSongDetailsAndArtists();
+  }, [id]); // Dependency on id to fetch details for the correct song
+
+  const handleSelectChange = (option) => {
+    if (option.value === "add_new") {
+      setIsModalOpen(true); // Open modal to add new artist
+    } else {
+      setSelectedArtis(option); // Set selected artist
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (CheckArtist === false) {
-      alert("Silahkan cek artis terlebih dahulu");
+    if (!selectedArtis) {
+      alert("Silahkan pilih artis terlebih dahulu");
       return;
-    }
-
-    let artistIdToUse;
-
-    if (artistExist === false) {
-      const artistData = {
-        artistName: String(artis),
-      };
-
-      try {
-        const artistResponse = await fetch(
-          "https://website-lirik-c51g.vercel.app/api/artists",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(artistData),
-          }
-        );
-
-        const artistDataResponse = await artistResponse.json();
-        console.log("Artist Response Data:", artistDataResponse);
-
-        artistIdToUse = artistDataResponse.data.artistId;
-      } catch (error) {
-        console.error("Error submitting artist data:", error);
-        return;
-      }
-    } else {
-      artistIdToUse = artistId;
     }
 
     // Data for editing song
     const requestData = {
       songsName: String(judulLagu),
-      artistId: String(artistIdToUse),
+      artistId: String(selectedArtis.value), // Use selected artist ID
       lirik: String(lirikLagu),
       songsLink: String(songsLink),
     };
@@ -131,6 +113,42 @@ const BodyEditLagu = () => {
     }
   };
 
+  const handleAddArtist = async () => {
+    if (!newArtistName) {
+      alert("Nama artis tidak boleh kosong.");
+      return;
+    }
+
+    try {
+      // Send POST request to add new artist
+      const response = await fetch("https://website-lirik-c51g.vercel.app/api/artists", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ artistName: newArtistName }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("Artist successfully added:", data);
+      setArtisOptions([...artisOptions, { value: data.artistId, label: newArtistName }]); // Add new artist to options
+      setNewArtistName(""); // Clear input field
+      setIsModalOpen(false); // Close modal
+      window.location.reload(); // Refresh the page
+    } catch (error) {
+      console.error("Error adding artist:", error);
+      setMessage("Terjadi kesalahan saat menambahkan artis.");
+    }
+  };
+
+  if (loading) {
+    return <div>Loading...</div>; // Show loading state
+  }
+
   return (
     <div className="text-black flex justify-center pt-5 pb-5">
       <div className="gap-4 p-10">
@@ -149,7 +167,7 @@ const BodyEditLagu = () => {
             </div>
           )}
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label className="block text-lg font-medium text-custom-black mb-2">
                 Judul Lagu
@@ -168,27 +186,37 @@ const BodyEditLagu = () => {
               <label className="block text-lg font-medium text-custom-black mb-2">
                 Nama Artis
               </label>
-              <input
-                type="text"
-                value={artis}
-                onChange={(e) => setArtis(e.target.value)}
-                placeholder="Masukkan nama artis"
-                className="w-full h-14 px-6 py-2 text-lg text-custom-black rounded-xl shadow-md focus:outline-none bg-custom-blue-white"
+              <Select
+                value={selectedArtis}
+                onChange={handleSelectChange} // Use new change handler
+                options={artisOptions}
+                placeholder="Pilih nama artis"
+                className="basic-single w-full h-14" // Set width and height to match
+                classNamePrefix="select"
+                isSearchable
+                styles={{
+                  control: (provided) => ({
+                    ...provided,
+                    height: '56px', // Set the height to match the input
+                    padding: '0 12px', // Add horizontal padding to match the input
+                    borderRadius: '0.75rem', // Match rounded corners
+                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', // Match shadow
+                    border: '1px solid #ccc', // Add border similar to input
+                    backgroundColor: '#C1E8FF', // Match background color (custom-blue-white)
+                  }),
+                  placeholder: (provided) => ({
+                    ...provided,
+                    color: '#A0AEC0', // Change placeholder color if needed
+                  }),
+                  singleValue: (provided) => ({
+                    ...provided,
+                    color: '#4A5568', // Change single value color to match input text
+                  }),
+                }}
                 required
               />
-              <button
-                type="button"
-                onClick={checkArtist}
-                className="mt-2 px-4 py-2 bg-custom-blue-seas text-white rounded-lg hover:bg-blue-600"
-                disabled={loading}
-              >
-                {loading ? "Memeriksa..." : "Cek Artis"}
-              </button>
-
-              {artistCheckMessage && (
-                <div className="text-red-500 mt-2">{artistCheckMessage}</div>
-              )}
             </div>
+
 
             <div>
               <label className="block text-lg font-medium text-custom-black mb-2">
@@ -226,8 +254,39 @@ const BodyEditLagu = () => {
                 {loading ? "Mengirim..." : "Edit Lagu"}
               </button>
             </div>
-          </form>
+          </div>
         </div>
+
+        {/* Modal for adding new artist */}
+        {isModalOpen && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+            <div className="bg-white p-5 rounded-lg shadow-md w-96">
+              <h2 className="text-lg font-bold mb-4">Tambah Artis Baru</h2>
+              <input
+                type="text"
+                value={newArtistName}
+                onChange={(e) => setNewArtistName(e.target.value)}
+                placeholder="Nama Artis"
+                className="w-full h-12 px-3 border border-gray-300 rounded-lg mb-4"
+                required
+              />
+              <div className="flex justify-between">
+                <button
+                  className="bg-red-500 text-white px-4 py-2 rounded-lg"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  Batal
+                </button>
+                <button
+                  className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                  onClick={handleAddArtist}
+                >
+                  Tambah
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
