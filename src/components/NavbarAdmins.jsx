@@ -57,7 +57,7 @@ const NavbarAdmins = () => {
         <ul className="flex space-x-8">
           <li>
             <a
-              href="/addLagu"
+              href="/admins"
               className="text-custom-black text-base font-bold font-jakarta"
             >
               Lagu
@@ -65,7 +65,7 @@ const NavbarAdmins = () => {
           </li>
           <li>
             <a
-              href="/addArtis"
+              href="/artists"
               className="text-custom-black text-base font-bold font-jakarta"
             >
               Artis
@@ -113,7 +113,7 @@ const NavbarAdmins = () => {
           <ul className="space-y-4">
             <li>
               <a
-                href="/addLagu"
+                href="/admins"
                 className="text-custom-black text-base font-bold font-jakarta block"
               >
                 Lagu
@@ -121,7 +121,7 @@ const NavbarAdmins = () => {
             </li>
             <li>
               <a
-                href="/addArtis"
+                href="/artists"
                 className="text-custom-black text-base font-bold font-jakarta block"
               >
                 Artis

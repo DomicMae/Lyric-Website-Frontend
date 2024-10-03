@@ -13,6 +13,9 @@ import HomePageAdmin from "./pages/HomePageAdmin";
 import DaftarLagu from "./pages/DaftarLagu";
 import EditLagu from "./pages/EditLagu";
 import EditArtis from "./pages/EditArtis";
+import AdminArtist from "./pages/AdminArtist";
+import ViewLaguAdmin from "./pages/ViewLaguAdmin";
+import ViewArtisAdmin from "./pages/ViewArtisAdmin";
 
 function App() {
   return (
@@ -30,10 +33,34 @@ function App() {
           }
         />
         <Route
+          path="/artists"
+          element={
+            <ProtectedRoute>
+              <AdminArtist />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/addLagu"
           element={
             <ProtectedRoute>
               <RequestLagu />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/Lagu/:id"
+          element={
+            <ProtectedRoute>
+              <ViewLaguAdmin />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/Artist/:id"
+          element={
+            <ProtectedRoute>
+              <ViewArtisAdmin />
             </ProtectedRoute>
           }
         />
@@ -54,7 +81,7 @@ function App() {
           }
         />
         <Route
-          path="/editArtis"
+          path="/editArtis/:id"
           element={
             <ProtectedRoute>
               <EditArtis />
