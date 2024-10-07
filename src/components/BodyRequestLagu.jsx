@@ -145,9 +145,9 @@ const BodyRequestLagu = () => {
   };
 
   return (
-    <div className="text-black flex justify-center pt-5 pb-5">
-      <div className="gap-4 p-10">
-        <div className="flex-col">
+    <div className="w-full h-full flex items-center justify-center p-5">
+      <div className="w-full h-full max-w-4xl p-10">
+        <div className="flex-col w-full h-full">
           {/* Title Section */}
           <h1 className="text-4xl font-bold sm:text-5xl text-custom-black pb-8">
             Tambahkan Lagu Baru

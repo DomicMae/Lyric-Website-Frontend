@@ -6,7 +6,7 @@ export default function EditArtis(props) {
     <div className="min-h-screen flex flex-col bg-custom-blue">
       <NavbarAdmins />
       <main className="flex-grow">
-        <section id="body-request" className="px-10">
+        <section id="body-request" className="p-10">
           <BodyEditArtis />
         </section>
       </main>

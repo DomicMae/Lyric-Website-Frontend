@@ -23,12 +23,14 @@ const BodyEditLagu = () => {
     const fetchSongDetailsAndArtists = async () => {
       try {
         // Fetching artists
-        const artistsResponse = await fetch("https://website-lirik-c51g.vercel.app/api/artists");
+        const artistsResponse = await fetch(
+          "https://website-lirik-c51g.vercel.app/api/artists"
+        );
         const artistsResult = await artistsResponse.json();
-        
+
         if (artistsResult && artistsResult.data) {
           // Format data for react-select
-          const options = artistsResult.data.map(artist => ({
+          const options = artistsResult.data.map((artist) => ({
             value: artist.artistId,
             label: artist.artistName,
           }));
@@ -40,13 +42,18 @@ const BodyEditLagu = () => {
         }
 
         // Fetching song details
-        const songResponse = await fetch(`https://website-lirik-c51g.vercel.app/api/songs/${id}`);
+        const songResponse = await fetch(
+          `https://website-lirik-c51g.vercel.app/api/songs/${id}`
+        );
         const songResult = await songResponse.json();
-        
+
         if (songResult && songResult.data) {
           const song = songResult.data;
           setJudulLagu(song.songsName);
-          setSelectedArtis({ value: song.artistId, label: song.artist.artistName }); // Set selected artist
+          setSelectedArtis({
+            value: song.artistId,
+            label: song.artist.artistName,
+          }); // Set selected artist
           setLirikLagu(song.lirik);
           setsongsLink(song.songsLink);
         } else {
@@ -121,13 +128,16 @@ const BodyEditLagu = () => {
 
     try {
       // Send POST request to add new artist
-      const response = await fetch("https://website-lirik-c51g.vercel.app/api/artists", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ artistName: newArtistName }),
-      });
+      const response = await fetch(
+        "https://website-lirik-c51g.vercel.app/api/artists",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ artistName: newArtistName }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Error: ${response.statusText}`);
@@ -135,7 +145,10 @@ const BodyEditLagu = () => {
 
       const data = await response.json();
       console.log("Artist successfully added:", data);
-      setArtisOptions([...artisOptions, { value: data.artistId, label: newArtistName }]); // Add new artist to options
+      setArtisOptions([
+        ...artisOptions,
+        { value: data.artistId, label: newArtistName },
+      ]); // Add new artist to options
       setNewArtistName(""); // Clear input field
       setIsModalOpen(false); // Close modal
       window.location.reload(); // Refresh the page
@@ -150,9 +163,9 @@ const BodyEditLagu = () => {
   }
 
   return (
-    <div className="text-black flex justify-center pt-5 pb-5">
-      <div className="gap-4 p-10">
-        <div className="flex-col">
+    <div className="w-full h-full flex items-center justify-center p-5">
+      <div className="w-full h-full max-w-4xl p-10">
+        <div className="flex-col w-full h-full">
           <h1 className="text-4xl font-bold sm:text-5xl text-custom-black pb-8">
             Edit Lagu
           </h1>
@@ -167,8 +180,8 @@ const BodyEditLagu = () => {
             </div>
           )}
 
-          <div className="space-y-6" onSubmit={handleSubmit}>
-            <div>
+          <form className="space-y-6 w-full h-full" onSubmit={handleSubmit}>
+            <div className="w-full">
               <label className="block text-lg font-medium text-custom-black mb-2">
                 Judul Lagu
               </label>
@@ -182,43 +195,34 @@ const BodyEditLagu = () => {
               />
             </div>
 
-            <div>
-              <label className="block text-lg font-medium text-custom-black mb-2">
+            <div className="w-full text-lg">
+              <label className="block font-medium text-custom-black mb-2">
                 Nama Artis
               </label>
               <Select
                 value={selectedArtis}
-                onChange={handleSelectChange} // Use new change handler
+                onChange={handleSelectChange}
                 options={artisOptions}
                 placeholder="Pilih nama artis"
-                className="basic-single w-full h-14" // Set width and height to match
+                className="w-full h-14"
                 classNamePrefix="select"
                 isSearchable
                 styles={{
                   control: (provided) => ({
                     ...provided,
-                    height: '56px', // Set the height to match the input
-                    padding: '0 12px', // Add horizontal padding to match the input
-                    borderRadius: '0.75rem', // Match rounded corners
-                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', // Match shadow
-                    border: '1px solid #ccc', // Add border similar to input
-                    backgroundColor: '#C1E8FF', // Match background color (custom-blue-white)
-                  }),
-                  placeholder: (provided) => ({
-                    ...provided,
-                    color: '#A0AEC0', // Change placeholder color if needed
-                  }),
-                  singleValue: (provided) => ({
-                    ...provided,
-                    color: '#4A5568', // Change single value color to match input text
+                    height: "56px",
+                    padding: "0 12px",
+                    borderRadius: "0.75rem",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    border: "1px solid #ccc",
+                    backgroundColor: "#C1E8FF",
                   }),
                 }}
                 required
               />
             </div>
 
-
-            <div>
+            <div className="w-full">
               <label className="block text-lg font-medium text-custom-black mb-2">
                 Lirik Lagu
               </label>
@@ -226,12 +230,11 @@ const BodyEditLagu = () => {
                 value={lirikLagu}
                 onChange={(e) => setLirikLagu(e.target.value)}
                 placeholder="Masukkan lirik lagu"
-                className="w-full h-40 px-6 py-2 text-lg text-custom-black rounded-xl shadow-md focus:outline-none bg-custom-blue-white"
+                className="w-full h-auto px-6 py-2 text-lg text-custom-black rounded-xl shadow-md focus:outline-none bg-custom-blue-white min-h-[400px] sm:min-h-[400px] sm:w-full"
                 required
               />
             </div>
-
-            <div>
+            <div className="w-full">
               <label className="block text-lg font-medium text-custom-black mb-2">
                 Link Lagu
               </label>
@@ -254,39 +257,8 @@ const BodyEditLagu = () => {
                 {loading ? "Mengirim..." : "Edit Lagu"}
               </button>
             </div>
-          </div>
+          </form>
         </div>
-
-        {/* Modal for adding new artist */}
-        {isModalOpen && (
-          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-            <div className="bg-white p-5 rounded-lg shadow-md w-96">
-              <h2 className="text-lg font-bold mb-4">Tambah Artis Baru</h2>
-              <input
-                type="text"
-                value={newArtistName}
-                onChange={(e) => setNewArtistName(e.target.value)}
-                placeholder="Nama Artis"
-                className="w-full h-12 px-3 border border-gray-300 rounded-lg mb-4"
-                required
-              />
-              <div className="flex justify-between">
-                <button
-                  className="bg-red-500 text-white px-4 py-2 rounded-lg"
-                  onClick={() => setIsModalOpen(false)}
-                >
-                  Batal
-                </button>
-                <button
-                  className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-                  onClick={handleAddArtist}
-                >
-                  Tambah
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

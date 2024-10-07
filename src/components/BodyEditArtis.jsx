@@ -187,7 +187,9 @@ const BodyEditArtis = () => {
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-8 rounded-xl shadow-lg text-center">
-            <h2 className="text-2xl font-bold mb-4">Artis berhasil diperbarui!</h2>
+            <h2 className="text-2xl font-bold mb-4">
+              Artis berhasil diperbarui!
+            </h2>
             <button
               onClick={handleModalClose}
               className="px-6 py-2 text-lg font-bold text-white bg-blue-500 rounded-xl hover:bg-blue-600"
